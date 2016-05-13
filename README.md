@@ -12,7 +12,7 @@ This is a base repository from CodeCola designed to be forked in order to create
 
 The first step is to "fork" the *[CodeColaLLC/WordPress](https://github.com/CodeColaLLC/WordPress)* repository for the particular client website you are working on. Forking within an organization cannot be done with the GitHub UI but it is easy enough to emulate by hand:
 
-1. Visit [GitHub.com](https://github.com/) and create a new, empty repository in the *CodeColaLLC* organization by clicking the *+* in the header. Don't add a readme, .gitignore, or license file. Name it after your client, e.g. *acme-co-wordpress*.
+1. [Create a new, empty repository in the *CodeColaLLC* organization](https://github.com/organizations/CodeColaLLC/repositories/new). Don't add a readme, .gitignore, or license file. Name it after your client, e.g. *acme-co-wordpress*.
 
 1. On your local computer, clone the newly created repository, e.g.
   ```
