@@ -58,7 +58,7 @@ mail(
 	$input->pusher->email . ', ' . $input->repository->owner->email,
 	'Automatic WordPress deploy complete',
 	'The repository ' . $input->repository->name . ' was successfully redeployed automatically from the ' . $branch .
-		'branch by ' . $input->pusher->name . '. Visit the website for ' . $input->repository->name . ' to confirm that ' .
+		' branch by ' . $input->pusher->name . '. Visit the website for ' . $input->repository->name . ' to confirm that ' .
 		'everything is working!',
 	'From: ' . $input->repository->owner->email . "\n" . 'Cc: ' . $mailroom
 );
