@@ -1,6 +1,7 @@
 <?php
 $body = @file_get_contents('php://input');
 $branch = isset($_GET['branch']) ? $_GET['branch'] : 'master';
+$mailroom = 'bxdughbdidv+tech@in.mailroom.hipch.at';
 
 if (
 	strpos($_SERVER['HTTP_USER_AGENT'], 'GitHub-Hookshot') === false ||
@@ -30,7 +31,7 @@ foreach (array('git pull origin ' . $branch) as $command) {
 			'Automatic WordPress deploy failed',
 			'The automatic WordPress deploy script failed for the ' . $input->repository->name . ' repository because the ' .
 				'git pull command did not exit with a 0 status code. The output was:' . "\n" . print_r($output, true),
-			'From: ' . $input->repository->owner->email
+			'From: ' . $input->repository->owner->email . "\n" . 'Cc: ' . $mailroom
 		);
 		die('Deploy failed. The git pull command did not exit with 0.' . "\n" . print_r($output, true));
 	}
@@ -53,4 +54,12 @@ function hash_equals ($a, $b) {
 }
 
 header('HTTP/1.1 200 OK');
+mail(
+	$input->pusher->email . ', ' . $input->repository->owner->email,
+	'Automatic WordPress deploy complete',
+	'The repository ' . $input->repository->name . ' was successfully redeployed automatically from the ' . $branch .
+		'branch by ' . $input->pusher->name . '. Visit the website for ' . $input->repository->name . ' to confirm that ' .
+		'everything is working!',
+	'From: ' . $input->repository->owner->email . "\n" . 'Cc: ' . $mailroom
+);
 die('Deployment of ' . $branch . ' branch was successful.');
