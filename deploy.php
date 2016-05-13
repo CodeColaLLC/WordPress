@@ -1,5 +1,6 @@
 <?php
 $body = @file_get_contents('php://input');
+$branch = isset($_GET['branch']) ? $_GET['branch'] : 'master';
 
 if (
 	strpos($_SERVER['HTTP_USER_AGENT'], 'GitHub-Hookshot') === false ||
@@ -9,14 +10,15 @@ if (
 	die('Request did not originate from GitHub-Hookshot with the correct secret.');
 }
 
-try {
-	$input = json_parse(file_get_contents('php://input'));
-	if ($input->ref !== 'refs/heads/master') {
-		die('Push was not to master branch. Canceling deploy.');
-	}
-} catch (Exception $ex) {
+$input = json_decode(file_get_contents('php://input'));
+if (!$input || !property_exists($input, 'ref')) {
 	header('HTTP/1.1 400 Bad Request');
-	die('Body of request could not be parsed as JSON or was missing `ref` property.');
+	die('Could not parse request body as JSON or is missing `ref` property.');
+}
+
+if ($input->ref !== 'refs/heads/' . $branch) {
+	header('HTTP/1.1 200 OK');
+	die('Push was not the deploy branch (' . $branch . '). Canceling deploy.');
 }
 
 foreach (array('git pull origin master') as $command) {
@@ -30,13 +32,14 @@ function verify_request ($body) {
 function hash_equals ($a, $b) {
 	$a_length = strlen($a);
 	if ($a_length !== strlen($b)) { return false; }
-	
+
 	$result = 0;
 	for ($i = 0; $i < $a_length; $i++) {
 		$result |= ord($a[$i]) ^ ord($b[$i]);
 	}
-	
+
 	return $result === 0;
 }
 
-die('Deployment of master branch was successful.');
+header('HTTP/1.1 200 OK');
+die('Deployment of ' . $branch . ' branch was successful.');
