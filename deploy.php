@@ -25,7 +25,14 @@ foreach (array('git pull origin ' . $branch) as $command) {
 	exec($command, $output, $return_var);
 	if ($return_var !== 0) {
 		header('HTTP/1.1 500 Internal Server Error');
-		die('Deploy failed. The git pull command did not exit with 0.\n' . print_r($output, true));
+		mail(
+			$input->pusher->email . ', ' . $input->repository->owner->email,
+			'Automatic WordPress deploy failed',
+			'The automatic WordPress deploy script failed for the ' . $input->repository->name . ' repository because the ' .
+				'git pull command did not exit with a 0 status code. The output was:' . "\n" . print_r($output, true),
+			'From: ' . $input->repository->owner->email
+		);
+		die('Deploy failed. The git pull command did not exit with 0.' . "\n" . print_r($output, true));
 	}
 }
 
