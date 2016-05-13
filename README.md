@@ -1,6 +1,12 @@
-# Setting Up New WordPress Website with Automatic Deploys
+# WordPress Setup and Deployment
 
-CodeCola has [a base repository skeleton](https://github.com/CodeColaLLC/WordPress) to fork in order to create a WordPress website. It includes a "starter" theme called [_s](http://underscores.me/) and the proper .gitignore file to exclude non-development WordPress core files. It also ships with a deploy script that can be configured to automatically update the theme and/or plugin files for a production website whenever someone pushes to the master branch.
+This is a base repository from CodeCola designed to be forked in order to create a WordPress website. It includes a "starter" theme called [_s](http://underscores.me/) and the proper .gitignore file to exclude non-development WordPress core files. It also ships with a deploy script that can be configured to automatically update the theme and/or plugin files for a production website whenever someone pushes to the master branch.
+
+* [Creating a new repository](#creating-a-new-repository)
+* [Installing WordPress locally](#installing-wordpress-locally)
+* [Installing WordPress on the server](#installing-wordpress-on-the-server)
+* [Setting up automatic deploy](#setting-up-automatic-deploy)
+* [Creating and renaming themes and plugins](#creating-and-renaming-themes-and-plugins)
 
 ## Creating a new repository
 
@@ -124,7 +130,7 @@ The last step is to configure the GitHub repository to trigger an automatic depl
 
 Now we should be at a point where the deploy script will be executed every time anyone pushes to the master branch. To try it, make sure the production website's theme is set to a theme being tracked by your repository, then try making a change to the theme in the master branch and committing/pushing it. It should automatically be reflected on the web host.
 
-## Creating/renaming themes and plugins
+## Creating and renaming themes and plugins
 
 It is important to note that the *.gitignore* ignores all files in the repository by default and only whitelists certain files and directories. This is because there are so many WordPress core files, and we cannot rely on their name and number to be consistent as WordPress evolves.
 
