@@ -99,13 +99,15 @@ At this point, a running copy of WordPress will be installed on the server, and 
 
 ## Setting up automatic deploy
 
-The last step is to configure the GitHub repository to trigger an automatic deployment whenever someone pushes to the master branch.
+The last step is to configure the GitHub repository to trigger an automatic deployment whenever someone pushes to a configurable branch.
+
+Whenever a deploy happens, an email is dispatched to the user who made the push, the user/team who owns the repository, and the email address specified at the top of the *deploy.php* file in the `$mailroom` variable. It will contain a brief message about the successful deployment or a message describing that an error occurred while attempting to `git pull`.
 
 1. Navigate to the repository in GitHub, e.g. *acme-co-wordpress*.
 
 1. Click *Settings*, then *Webhooks & services*, then *Add webhook*.
 
-1. In the *Payload URL* field, enter the path to the hosted WordPress installation, followed by *deploy.php*, e.g. `http://acmeco.com/deploy.php`
+1. In the *Payload URL* field, enter the path to the hosted WordPress installation, followed by *deploy.php*, e.g. `http://acmeco.com/deploy.php`. If you want to specify the branch to deploy off of, add it to the query string, e.g. `http:/acmeco.com/deploy.php?branch=live`. By default, it will pull from the *master* branch whenever any commit is pushed to it.
 
 1. In the *Secret* field, choose a long, random, unpredictable token. You can generate one at a website like [this](http://randomkeygen.com/) (see the *Ft. Knox Passwords* section). Keep track of this "secret" for now, but don't store it anywhere permanently.
 
