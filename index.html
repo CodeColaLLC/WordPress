@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>WordPress Setup and Deployment by CodeColaLLC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">WordPress Setup and Deployment</h1>
+      <h2 class="project-tagline">A base repository from CodeCola designed to be forked in order to create a WordPress website.</h2>
+      <a href="https://github.com/CodeColaLLC/WordPress" class="btn">View on GitHub</a>
+      <a href="https://github.com/CodeColaLLC/WordPress/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/CodeColaLLC/WordPress/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="wordpress-setup-and-deployment" class="anchor" href="#wordpress-setup-and-deployment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WordPress Setup and Deployment</h1>
+
+<p>This is a base repository from CodeCola designed to be forked in order to create a WordPress website. It includes a "starter" theme called <a href="http://underscores.me/">_s</a> and the proper .gitignore file to exclude non-development WordPress core files. It also ships with a deploy script that can be configured to automatically update the theme and/or plugin files for a production website whenever someone pushes to the master branch.</p>
+
+<ul>
+<li><a href="#creating-a-new-repository">Creating a new repository</a></li>
+<li><a href="#installing-wordpress-locally">Installing WordPress locally</a></li>
+<li><a href="#installing-wordpress-on-the-server">Installing WordPress on the server</a></li>
+<li><a href="#setting-up-automatic-deploy">Setting up automatic deploy</a></li>
+<li><a href="#creating-and-renaming-themes-and-plugins">Creating and renaming themes and plugins</a></li>
+</ul>
+
+<h2>
+<a id="creating-a-new-repository" class="anchor" href="#creating-a-new-repository" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a new repository</h2>
+
+<p>The first step is to "fork" the <em><a href="https://github.com/CodeColaLLC/WordPress">CodeColaLLC/WordPress</a></em> repository for the particular client website you are working on. Forking within an organization cannot be done with the GitHub UI but it is easy enough to emulate by hand:</p>
+
+<ol>
+<li><p>Visit <a href="https://github.com/">GitHub.com</a> and create a new, empty repository in the <em>CodeColaLLC</em> organization by clicking the <em>+</em> in the header. Don't add a readme, .gitignore, or license file. Name it after your client, e.g. <em>acme-co-wordpress</em>.</p></li>
+<li>
+<p>On your local computer, clone the newly created repository, e.g.</p>
+
+<pre><code>git clone https://github.com/CodeColaLLC/acme-co-wordpress
+</code></pre>
+</li>
+<li>
+<p>Navigate into the cloned repository's directory, e.g.</p>
+
+<pre><code>cd acme-co-wordpress
+</code></pre>
+</li>
+<li>
+<p>Add the base WordPress repository as an upstream source:</p>
+
+<pre><code>git remote add upstream https://github.com/CodeColaLLC/WordPress
+</code></pre>
+</li>
+<li>
+<p>Finally, merge in the upstream repository's code with</p>
+
+<pre><code>git pull upstream master
+</code></pre>
+</li>
+</ol>
+
+<p>Now the repository is linked to the original WordPress repository and can be used normally. If changes are made to the WordPress repository that you want to sync with the client's instance, simply use <code>git pull upstream master</code> to merge in the changes again.</p>
+
+<h2>
+<a id="installing-wordpress-locally" class="anchor" href="#installing-wordpress-locally" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing WordPress locally</h2>
+
+<p>The newly created repository will have a basic WordPress theme in it, a deployment script, and pretty much nothing else. To install WordPress:</p>
+
+<ol>
+<li><p><a href="https://wordpress.org/latest.zip">Download it</a> from <a href="https://wordpress.org/">their website</a>.</p></li>
+<li><p>Extract the zip file.</p></li>
+<li><p>Copy the contents from the <em>wordpress</em> directory inside the extracted zip file contents into your repository's root (e.g. <em>acme-co-wordpress</em>).</p></li>
+<li><p>Assuming you have Apache, PHP, and MySQL installed and running locally and your repository is located within the <em>public_html</em> or equivalent public root location, you should be able to navigate to http://localhost/<em>path/to</em>/<em>acme-co-wordpress</em> to visit your local installation.</p></li>
+<li><p>Using your local phpMyAdmin instance or a terminal, create a new database for this WordPress website, e.g. <code>acmeco_wp</code>.</p></li>
+<li><p>Follow the installation wizard with WordPress to complete the setup.</p></li>
+</ol>
+
+<p>Now you will have a local WordPress instance running to design with.</p>
+
+<h2>
+<a id="installing-wordpress-on-the-server" class="anchor" href="#installing-wordpress-on-the-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing WordPress on the server</h2>
+
+<p>In order to install WordPress on the client's web server, you will need SSH access to the server. Accessing SSH will vary depending on the hosting provider, and may require enabling in cPanel or an equivalent.</p>
+
+<ol>
+<li>
+<p>SSH into the hosting web server for the client, e.g.</p>
+
+<pre><code>ssh acmeco@acmeco.com
+</code></pre>
+</li>
+<li><p>Once authenticated, make sure you are in the user's home directory.</p></li>
+<li><p>Run an <code>ls</code> command, looking for the public root (such as <em>public_html</em>, <em>htdocs</em>, or <em>www</em>). Future examples will consider this directory to be called <em>public_html</em>. </p></li>
+<li><p>If <strong>any</strong> files exist in this public root directory, the next command will fail. Delete or move any existing files before running the next command.</p></li>
+<li>
+<p>Assuming Git is installed on the host, clone the client's WordPress website into the public root directory with</p>
+
+<pre><code>git clone https://github.com/CodeColaLLC/acme-co-wordpress public_html
+</code></pre>
+</li>
+<li>
+<p>Download WordPress with</p>
+
+<pre><code>wget https://wordpress.org/latest.zip
+</code></pre>
+</li>
+<li>
+<p>Extract the zip file with</p>
+
+<pre><code>unzip latest.zip
+</code></pre>
+</li>
+<li>
+<p>Move the extracted <em>wordpress</em> directory into the public root, e.g.</p>
+
+<pre><code>mv wordpress/* public_html
+</code></pre>
+</li>
+<li><p>You should now be able to access the WordPress install wizard on the web server. Navigate to the website's domain (e.g. http://<em>acmeco.com</em>) to get to the installation wizard.</p></li>
+<li><p>Using cPanel or equivalent, create a MySQL database for this WordPress instance as well as a user who has access to it. A common pattern is to create a database named something like <code>acmeco_wp</code> and a user with the same name, and then grant the user all privileges for the database. Always use a random, strong password for the user.</p></li>
+<li><p>Complete the WordPress installation wizard using the MySQL credentials.</p></li>
+</ol>
+
+<p>At this point, a running copy of WordPress will be installed on the server, and because we cloned the repository, the <em>_s</em> theme should be available. Try logging into the WordPress Dashboard and selecting the theme to verify that it exists.</p>
+
+<h2>
+<a id="setting-up-automatic-deploy" class="anchor" href="#setting-up-automatic-deploy" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setting up automatic deploy</h2>
+
+<p>The last step is to configure the GitHub repository to trigger an automatic deployment whenever someone pushes to the master branch.</p>
+
+<ol>
+<li><p>Navigate to the repository in GitHub, e.g. <em>acme-co-wordpress</em>.</p></li>
+<li><p>Click <em>Settings</em>, then <em>Webhooks &amp; services</em>, then <em>Add webhook</em>.</p></li>
+<li><p>In the <em>Payload URL</em> field, enter the path to the hosted WordPress installation, followed by <em>deploy.php</em>, e.g. <code>http://acmeco.com/deploy.php</code></p></li>
+<li><p>In the <em>Secret</em> field, choose a long, random, unpredictable token. You can generate one at a website like <a href="http://randomkeygen.com/">this</a> (see the <em>Ft. Knox Passwords</em> section). Keep track of this "secret" for now, but don't store it anywhere permanently.</p></li>
+<li><p>Click <em>Add webhook</em>.</p></li>
+<li><p>SSH into the client's web server.</p></li>
+<li>
+<p>Modify the bash profile or equivalent with your favorite editor, e.g.</p>
+
+<pre><code>vim ~/.bash_profile
+</code></pre>
+</li>
+<li>
+<p>Add a new line to create an environment variable called <em>GIT_TOKEN</em> and set it to your "secret," e.g.</p>
+
+<pre><code>GIT_TOKEN=1234568790abcdefg
+</code></pre>
+</li>
+<li>
+<p>Save and close the profile file, then refresh your terminal session by running</p>
+
+<pre><code>source ~/.bash_profile
+</code></pre>
+</li>
+</ol>
+
+<p>Now we should be at a point where the deploy script will be executed every time anyone pushes to the master branch. To try it, make sure the production website's theme is set to a theme being tracked by your repository, then try making a change to the theme in the master branch and committing/pushing it. It should automatically be reflected on the web host.</p>
+
+<h2>
+<a id="creating-and-renaming-themes-and-plugins" class="anchor" href="#creating-and-renaming-themes-and-plugins" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating and renaming themes and plugins</h2>
+
+<p>It is important to note that the <em>.gitignore</em> ignores all files in the repository by default and only whitelists certain files and directories. This is because there are so many WordPress core files, and we cannot rely on their name and number to be consistent as WordPress evolves.</p>
+
+<p>If you rename the <em>_s</em> theme, create a new theme, or create a plugin for the website, you should open the <em>.gitignore</em> file and make sure to whitelist them.</p>
+
+<p>For example, to un-ignore a new theme called <em>acmeco</em>, add <code>!wp-content/themes/acmeco/</code> after <code>wp-content/themes/*</code> in the <em>.gitignore</em>.</p>
+
+<p>To un-ignore a new plugin called <em>acmeco</em>, add <code>!wp-content/plugins/acmeco/</code> after <code>wp-content/plugins/*</code> in the <em>.gitignore</em>.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/CodeColaLLC/WordPress">WordPress Setup and Deployment</a> is maintained by <a href="https://github.com/CodeColaLLC">CodeColaLLC</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
