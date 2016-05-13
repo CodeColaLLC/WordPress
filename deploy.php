@@ -22,7 +22,11 @@ if ($input->ref !== 'refs/heads/' . $branch) {
 }
 
 foreach (array('git pull origin ' . $branch) as $command) {
-	shell_exec($command);
+	exec($command, $output, $return_var);
+	if ($return_var !== 0) {
+		header('HTTP/1.1 500 Internal Server Error');
+		die('Deploy failed. The git pull command did not exit with 0.\n' . print_r($output, true));
+	}
 }
 
 function verify_request ($body) {
