@@ -1,5 +1,6 @@
 /*
 !.gitignore
+!deploy.php
 
 !wp-content/
 
