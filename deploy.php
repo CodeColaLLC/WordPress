@@ -21,7 +21,7 @@ if ($input->ref !== 'refs/heads/' . $branch) {
 	die('Push was not the deploy branch (' . $branch . '). Canceling deploy.');
 }
 
-foreach (array('git pull origin master') as $command) {
+foreach (array('git pull origin ' . $branch) as $command) {
 	shell_exec($command);
 }
 
