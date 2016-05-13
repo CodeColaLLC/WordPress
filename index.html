@@ -38,7 +38,7 @@
 <p>The first step is to "fork" the <em><a href="https://github.com/CodeColaLLC/WordPress">CodeColaLLC/WordPress</a></em> repository for the particular client website you are working on. Forking within an organization cannot be done with the GitHub UI but it is easy enough to emulate by hand:</p>
 
 <ol>
-<li><p>Visit <a href="https://github.com/">GitHub.com</a> and create a new, empty repository in the <em>CodeColaLLC</em> organization by clicking the <em>+</em> in the header. Don't add a readme, .gitignore, or license file. Name it after your client, e.g. <em>acme-co-wordpress</em>.</p></li>
+<li><p><a href="https://github.com/organizations/CodeColaLLC/repositories/new">Create a new, empty repository in the <em>CodeColaLLC</em> organization</a>. Don't add a readme, .gitignore, or license file. Name it after your client, e.g. <em>acme-co-wordpress</em>.</p></li>
 <li>
 <p>On your local computer, clone the newly created repository, e.g.</p>
 
@@ -132,12 +132,14 @@
 <h2>
 <a id="setting-up-automatic-deploy" class="anchor" href="#setting-up-automatic-deploy" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setting up automatic deploy</h2>
 
-<p>The last step is to configure the GitHub repository to trigger an automatic deployment whenever someone pushes to the master branch.</p>
+<p>The last step is to configure the GitHub repository to trigger an automatic deployment whenever someone pushes to a configurable branch.</p>
+
+<p>Whenever a deploy happens, an email is dispatched to the user who made the push, the user/team who owns the repository, and the email address specified at the top of the <em>deploy.php</em> file in the <code>$mailroom</code> variable. It will contain a brief message about the successful deployment or a message describing that an error occurred while attempting to <code>git pull</code>.</p>
 
 <ol>
 <li><p>Navigate to the repository in GitHub, e.g. <em>acme-co-wordpress</em>.</p></li>
 <li><p>Click <em>Settings</em>, then <em>Webhooks &amp; services</em>, then <em>Add webhook</em>.</p></li>
-<li><p>In the <em>Payload URL</em> field, enter the path to the hosted WordPress installation, followed by <em>deploy.php</em>, e.g. <code>http://acmeco.com/deploy.php</code></p></li>
+<li><p>In the <em>Payload URL</em> field, enter the path to the hosted WordPress installation, followed by <em>deploy.php</em>, e.g. <code>http://acmeco.com/deploy.php</code>. If you want to specify the branch to deploy off of, add it to the query string, e.g. <code>http:/acmeco.com/deploy.php?branch=live</code>. By default, it will pull from the <em>master</em> branch whenever any commit is pushed to it.</p></li>
 <li><p>In the <em>Secret</em> field, choose a long, random, unpredictable token. You can generate one at a website like <a href="http://randomkeygen.com/">this</a> (see the <em>Ft. Knox Passwords</em> section). Keep track of this "secret" for now, but don't store it anywhere permanently.</p></li>
 <li><p>Click <em>Add webhook</em>.</p></li>
 <li><p>SSH into the client's web server.</p></li>
