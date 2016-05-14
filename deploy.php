@@ -13,7 +13,7 @@ if (!verify_request($body)) {
 $input = json_decode($body);
 if (!$input) {
 	header('HTTP/1.1 400 Bad Request');
-	die('Could not parse request body as JSON or is missing `ref` property.');
+	die('Could not parse request body as JSON.');
 }
 
 if ($input->ref !== 'refs/heads/' . $branch) {
@@ -41,7 +41,7 @@ die('Deployment of ' . $branch . ' branch was successful.');
  */
 function verify_request ($body) {
 	global $token;
-	return strpos($_SERVER['HTTP_USER_AGENT'], 'GitHub-Hookshot') === false &&
+	return strpos($_SERVER['HTTP_USER_AGENT'], 'GitHub-Hookshot') !== false &&
 		hash_equals($_SERVER['HTTP_X_HUB_SIGNATURE'], 'sha1=' . hash_hmac('sha1', $body, $token));
 }
 
