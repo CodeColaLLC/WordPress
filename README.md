@@ -115,30 +115,34 @@ Whenever a deploy happens, an email is dispatched to the user who made the push,
 
 1. SSH into the client's web server.
 
-1. Modify the bash profile or equivalent with your favorite editor, e.g.
+1. Change into the public root directory or path to the WordPress installation, e.g.
   ```
-  vim ~/.bash_profile
-  ```
-
-1. Add a new line to create an environment variable called *DEPLOY_GIT_TOKEN* and set it to your "secret," e.g.
-  ```
-  DEPLOY_GIT_TOKEN=1234568790abcdefg
+  cd public_html
   ```
 
-1. If you want to configure a different branch other than *master* to trigger deploys from, set *DEPLOY_GIT_BRANCH*, e.g.
+1. Using your preferred editor, create a file named `.deployconfig.json`.
   ```
-  DEPLOY_GIT_BRANCH=live
-  ```
-
-1. If you want to configure any email addresses to carbon copy deploy alerts, specify them as a comma-separated list in *DEPLOY_CC*, e.g.
-  ```
-  DEPLOY_CC=chatroomalerts@in.mailroom.hipch.at,alerts@codecola.io
+  vim .deployconfig.json
   ```
 
-1. Save and close the profile file, then refresh your terminal session by running
+1. Craft a simple JSON object. The only required property is *token*, which should be set to the secret randomly generated string we attached to the GitHub Webhook earlier.
   ```
-  source ~/.bash_profile
+  {
+    "token": "1234567890abcdefg"
+  }
+  }
   ```
+
+1. If you want to configure any email addresses to carbon copy deploy alerts, specify them as a comma-separated list in *cc*. If you want to define a different branch to deploy from instead of *master*, add a *branch* property.
+  ```
+  {
+    "token": "1234567890abcdefg",
+    "cc": "mymailroom@in.mailroom.hipch.at,importantperson@codecola.io",
+    "branch": "live"
+  }
+  ```
+
+1. Save the file.
 
 Now we should be at a point where the deploy script will be executed every time anyone pushes to the master (or configured) branch. To try it, make sure the production website's theme is set to a theme being tracked by your repository, then try making a change to the theme in the master branch and committing/pushing it. It should automatically be reflected on the web host.
 

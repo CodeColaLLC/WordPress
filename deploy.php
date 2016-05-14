@@ -1,9 +1,9 @@
 <?php
-$body = @file_get_contents('php://input');
+$config = json_decode(file_get_contents(__DIR__ . '/.deployconfig.json'));
+if (!isset($config->branch)) { $config->branch = 'master'; }
+if (!isset($config->cc)) { $config->cc = null; }
 
-$token = $_ENV['DEPLOY_GIT_TOKEN'];
-$branch = isset($_ENV['DEPLOY_GIT_BRANCH']) ? $_ENV['DEPLOY_GIT_BRANCH'] : 'master';
-$cc = isset($_ENV['DEPLOY_CC']) ? $_ENV['DEPLOY_CC'] : null;
+$body = file_get_contents('php://input');
 
 if (!verify_request($body)) {
 	header('HTTP/1.1 403 Forbidden');
@@ -16,12 +16,12 @@ if (!$input) {
 	die('Could not parse request body as JSON.');
 }
 
-if ($input->ref !== 'refs/heads/' . $branch) {
+if ($input->ref !== 'refs/heads/' . $config->branch) {
 	header('HTTP/1.1 200 OK');
-	die('Push was not the deploy branch (' . $branch . '). Canceling deploy.');
+	die('Push was not the deploy branch (' . $config->branch . '). Canceling deploy.');
 }
 
-foreach (array('git pull origin ' . $branch, 'git submodule sync', 'git submodule update') as $command) {
+foreach (array('git pull origin ' . $config->branch, 'git submodule sync', 'git submodule update') as $command) {
 	exec($command, $output, $return_var);
 	if ($return_var !== 0) {
 		send_email($input, $output);
@@ -32,7 +32,7 @@ foreach (array('git pull origin ' . $branch, 'git submodule sync', 'git submodul
 
 send_email($input);
 header('HTTP/1.1 200 OK');
-die('Deployment of ' . $branch . ' branch was successful.');
+die('Deployment of ' . $config->branch . ' branch was successful.');
 
 /**
  * Verifies that the user agent and SHA1 signature match the "secret" token.
@@ -40,9 +40,9 @@ die('Deployment of ' . $branch . ' branch was successful.');
  * @return bool True if the request is valid
  */
 function verify_request ($body) {
-	global $token;
+	global $config;
 	return strpos($_SERVER['HTTP_USER_AGENT'], 'GitHub-Hookshot') !== false &&
-		hash_equals($_SERVER['HTTP_X_HUB_SIGNATURE'], 'sha1=' . hash_hmac('sha1', $body, $token));
+		hash_equals($_SERVER['HTTP_X_HUB_SIGNATURE'], 'sha1=' . hash_hmac('sha1', $body, $config->token));
 }
 
 /**
@@ -65,17 +65,17 @@ function hash_equals ($a, $b) {
 
 /**
  * Sends an email broadcasting an event to the user who pushed the branch, the repository's owner, and email addresses
- * specified in the DEPLOY_CC environment variable.
+ * specified in the config "cc" property.
  * @param object $input The JSON-decoded request data
  * @param null|string $error If not null, sends an error alert
  */
 function send_email ($input, $error = null) {
-	global $branch, $cc;
+	global $config;
 
 	if ($error === null) {
 		$subject = 'Automatic WordPress deploy complete';
 		$message = 'The repository ' . $input->repository->name . ' was successfully redeployed automatically from the ' .
-			$branch . ' branch by ' . $input->pusher->name . '. Visit the website for ' . $input->repository->name . ' to ' .
+			$config->branch . ' branch by ' . $input->pusher->name . '. Visit the website for ' . $input->repository->name . ' to ' .
 			'confirm that everything is working!';
 	} else {
 		$subject = 'Automatic WordPress deploy FAILED';
@@ -87,6 +87,6 @@ function send_email ($input, $error = null) {
 		implode(', ', array($input->pusher->email, $input->repository->owner->email)),
 		$subject,
 		$message,
-		'From: ' . $input->repository->owner->email . ($cc ? "\n" . 'Cc: ' . $cc : '')
+		'From: ' . $input->repository->owner->email . ($config->cc ? "\n" . 'Cc: ' . $config->cc : '')
 	);
 }
