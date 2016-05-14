@@ -12,16 +12,16 @@ This is a base repository from CodeCola designed to be forked in order to create
 
 The first step is to "fork" the *[CodeColaLLC/WordPress](https://github.com/CodeColaLLC/WordPress)* repository for the particular client website you are working on. Forking within an organization cannot be done with the GitHub UI but it is easy enough to emulate by hand:
 
-1. [Create a new, empty repository in the *CodeColaLLC* organization](https://github.com/organizations/CodeColaLLC/repositories/new). Don't add a readme, .gitignore, or license file. Name it after your client, e.g. *acme-co-wordpress*.
+1. [Create a new, empty repository in the *CodeColaLLC* organization](https://github.com/organizations/CodeColaLLC/repositories/new). Don't add a readme, .gitignore, or license file. Name it after your client, e.g. *acmeco-wordpress*.
 
 1. On your local computer, clone the newly created repository, e.g.
   ```
-  git clone https://github.com/CodeColaLLC/acme-co-wordpress
+  git clone https://github.com/CodeColaLLC/acmeco-wordpress.git
   ```
 
 1. Navigate into the cloned repository's directory, e.g.
   ```
-  cd acme-co-wordpress
+  cd acmeco-wordpress
   ```
 
 1. Add the base WordPress repository as an upstream source:
@@ -44,9 +44,9 @@ The newly created repository will have a basic WordPress theme in it, a deployme
 
 1. Extract the zip file.
 
-1. Copy the contents from the *wordpress* directory inside the extracted zip file contents into your repository's root (e.g. *acme-co-wordpress*).
+1. Copy the contents from the *wordpress* directory inside the extracted zip file contents into your repository's root (e.g. *acmeco-wordpress*).
 
-1. Assuming you have Apache, PHP, and MySQL installed and running locally and your repository is located within the *public_html* or equivalent public root location, you should be able to navigate to http://localhost/*path/to*/*acme-co-wordpress* to visit your local installation.
+1. Assuming you have Apache, PHP, and MySQL installed and running locally and your repository is located within the *public_html* or equivalent public root location, you should be able to navigate to http://localhost/*path/to*/*acmeco-wordpress* to visit your local installation.
 
 1. Using your local phpMyAdmin instance or a terminal, create a new database for this WordPress website, e.g. `acmeco_wp`.
 
@@ -71,7 +71,7 @@ In order to install WordPress on the client's web server, you will need SSH acce
 
 1. Assuming Git is installed on the host, clone the client's WordPress website into the public root directory with
   ```
-  git clone https://github.com/CodeColaLLC/acme-co-wordpress public_html
+  git clone https://github.com/CodeColaLLC/acmeco-wordpress.git public_html
   ```
 
 1. Download WordPress with
@@ -101,13 +101,13 @@ At this point, a running copy of WordPress will be installed on the server, and 
 
 The last step is to configure the GitHub repository to trigger an automatic deployment whenever someone pushes to a configurable branch.
 
-Whenever a deploy happens, an email is dispatched to the user who made the push, the user/team who owns the repository, and the email address specified at the top of the *deploy.php* file in the `$mailroom` variable. It will contain a brief message about the successful deployment or a message describing that an error occurred while attempting to `git pull`.
+Whenever a deploy happens, an email is dispatched to the user who made the push, the user/team who owns the repository, and configurable additional email addresses. It will contain a brief message about the successful deployment or a message describing that an error occurred while attempting to `git pull`.
 
-1. Navigate to the repository in GitHub, e.g. *acme-co-wordpress*.
+1. Navigate to the repository in GitHub, e.g. *acmeco-wordpress*.
 
 1. Click *Settings*, then *Webhooks & services*, then *Add webhook*.
 
-1. In the *Payload URL* field, enter the path to the hosted WordPress installation, followed by *deploy.php*, e.g. `http://acmeco.com/deploy.php`. If you want to specify the branch to deploy off of, add it to the query string, e.g. `http:/acmeco.com/deploy.php?branch=live`. By default, it will pull from the *master* branch whenever any commit is pushed to it.
+1. In the *Payload URL* field, enter the path to the hosted WordPress installation, followed by *deploy.php*, e.g. `http://acmeco.com/deploy.php`.
 
 1. In the *Secret* field, choose a long, random, unpredictable token. You can generate one at a website like [this](http://randomkeygen.com/) (see the *Ft. Knox Passwords* section). Keep track of this "secret" for now, but don't store it anywhere permanently.
 
@@ -120,9 +120,19 @@ Whenever a deploy happens, an email is dispatched to the user who made the push,
   vim ~/.bash_profile
   ```
 
-1. Add a new line to create an environment variable called *GIT_TOKEN* and set it to your "secret," e.g.
+1. Add a new line to create an environment variable called *DEPLOY_GIT_TOKEN* and set it to your "secret," e.g.
   ```
-  GIT_TOKEN=1234568790abcdefg
+  DEPLOY_GIT_TOKEN=1234568790abcdefg
+  ```
+
+1. If you want to configure a different branch other than *master* to trigger deploys from, set *DEPLOY_GIT_BRANCH*, e.g.
+  ```
+  DEPLOY_GIT_BRANCH=live
+  ```
+
+1. If you want to configure any email addresses to carbon copy deploy alerts, specify them as a comma-separated list in *DEPLOY_CC*, e.g.
+  ```
+  DEPLOY_CC=chatroomalerts@in.mailroom.hipch.at,alerts@codecola.io
   ```
 
 1. Save and close the profile file, then refresh your terminal session by running
@@ -130,7 +140,7 @@ Whenever a deploy happens, an email is dispatched to the user who made the push,
   source ~/.bash_profile
   ```
 
-Now we should be at a point where the deploy script will be executed every time anyone pushes to the master branch. To try it, make sure the production website's theme is set to a theme being tracked by your repository, then try making a change to the theme in the master branch and committing/pushing it. It should automatically be reflected on the web host.
+Now we should be at a point where the deploy script will be executed every time anyone pushes to the master (or configured) branch. To try it, make sure the production website's theme is set to a theme being tracked by your repository, then try making a change to the theme in the master branch and committing/pushing it. It should automatically be reflected on the web host.
 
 ## Creating and renaming themes and plugins
 
