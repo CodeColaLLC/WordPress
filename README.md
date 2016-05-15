@@ -126,14 +126,14 @@ Whenever a deploy happens, an email is dispatched to the user who made the push,
   ```
 
 1. Craft a simple JSON object. The only required property is *token*, which should be set to the secret randomly generated string we attached to the GitHub Webhook earlier.
-  ```
+  ```json
   {
     "token": "1234567890abcdefg"
   }
   ```
 
 1. If you want to configure any email addresses to carbon copy deploy alerts, specify them as a comma-separated list in *cc*. If you want to define a different branch to deploy from instead of *master*, add a *branch* property.
-  ```
+  ```json
   {
     "token": "1234567890abcdefg",
     "cc": "mymailroom@in.mailroom.hipch.at,importantperson@codecola.io",
