@@ -12,7 +12,7 @@ This is a base repository from CodeCola designed to be forked in order to create
 
 The first step is to "fork" the *[CodeColaLLC/WordPress](https://github.com/CodeColaLLC/WordPress)* repository for the particular client website you are working on. Forking within an organization cannot be done with the GitHub UI but it is easy enough to emulate by hand:
 
-1. [Create a new, empty repository in the *CodeColaLLC* organization](https://github.com/organizations/CodeColaLLC/repositories/new). Don't add a readme, .gitignore, or license file. Name it after your client, e.g. *acmeco-wordpress*.
+1. [Create a new, empty repository in the *CodeColaLLC* organization](https://github.com/organizations/CodeColaLLC/repositories/new). ❗ Don't add a readme, .gitignore, or license file. Name it after your client, e.g. *acmeco-wordpress*.
 
 1. On your local computer, clone the newly created repository, e.g.
   ```
@@ -67,7 +67,7 @@ In order to install WordPress on the client's web server, you will need SSH acce
 
 1. Run an `ls` command, looking for the public root (such as *public_html*, *htdocs*, or *www*). Future examples will consider this directory to be called *public_html*. 
 
-1. If **any** files exist in this public root directory, the next command will fail. Delete or move any existing files before running the next command.
+1. ❗ If **any** files exist in this public root directory, the next command will fail. Delete or move any existing files before running the next command.
 
 1. Assuming Git is installed on the host, clone the client's WordPress website into the public root directory with
   ```
@@ -109,7 +109,7 @@ Whenever a deploy happens, an email is dispatched to the user who made the push,
 
 1. In the *Payload URL* field, enter the path to the hosted WordPress installation, followed by *deploy.php*, e.g. `http://acmeco.com/deploy.php`.
 
-1. In the *Secret* field, choose a long, random, unpredictable token. You can generate one at a website like [this](http://randomkeygen.com/) (see the *Ft. Knox Passwords* section). Keep track of this "secret" for now, but don't store it anywhere permanently.
+1. In the *Secret* field, choose a long, random, unpredictable token. You can generate one at a website like [this](http://randomkeygen.com/) (see the *Ft. Knox Passwords* section). Keep track of this "secret" for now, but ❗ don't store it anywhere permanently. (If it is lost, just generate a new one.)
 
 1. Click *Add webhook*.
 
@@ -130,7 +130,6 @@ Whenever a deploy happens, an email is dispatched to the user who made the push,
   {
     "token": "1234567890abcdefg"
   }
-  }
   ```
 
 1. If you want to configure any email addresses to carbon copy deploy alerts, specify them as a comma-separated list in *cc*. If you want to define a different branch to deploy from instead of *master*, add a *branch* property.
@@ -148,7 +147,7 @@ Now we should be at a point where the deploy script will be executed every time 
 
 ## Creating and renaming themes and plugins
 
-It is important to note that the *.gitignore* ignores all files in the repository by default and only whitelists certain files and directories. This is because there are so many WordPress core files, and we cannot rely on their name and number to be consistent as WordPress evolves.
+❗ It is important to note that the *.gitignore* ignores all files in the repository by default and only whitelists certain files and directories. This is because there are so many WordPress core files, and we cannot rely on their name and number to be consistent as WordPress evolves.
 
 If you rename the *_s* theme, create a new theme, or create a plugin for the website, you should open the *.gitignore* file and make sure to whitelist them.
 
