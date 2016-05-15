@@ -158,20 +158,18 @@
 <li>
 <p>Craft a simple JSON object. The only required property is <em>token</em>, which should be set to the secret randomly generated string we attached to the GitHub Webhook earlier.</p>
 
-<pre><code>{
-  "token": "1234567890abcdefg"
-}
-</code></pre>
+<div class="highlight highlight-source-json"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1234567890abcdefg<span class="pl-pds">"</span></span>
+}</pre></div>
 </li>
 <li>
 <p>If you want to configure any email addresses to carbon copy deploy alerts, specify them as a comma-separated list in <em>cc</em>. If you want to define a different branch to deploy from instead of <em>master</em>, add a <em>branch</em> property.</p>
 
-<pre><code>{
-  "token": "1234567890abcdefg",
-  "cc": "mymailroom@in.mailroom.hipch.at,importantperson@codecola.io",
-  "branch": "live"
-}
-</code></pre>
+<div class="highlight highlight-source-json"><pre>{
+  <span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1234567890abcdefg<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>cc<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>mymailroom@in.mailroom.hipch.at,importantperson@codecola.io<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>branch<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>live<span class="pl-pds">"</span></span>
+}</pre></div>
 </li>
 <li><p>Save the file.</p></li>
 </ol>
