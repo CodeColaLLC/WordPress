@@ -11,4 +11,4 @@ wp-content/*
 wp-content/plugins/*
 
 wp-content/themes/*
-!wp-content/themes/_s/
+!wp-content/themes/codecola/
