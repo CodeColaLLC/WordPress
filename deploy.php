@@ -45,22 +45,24 @@ function verify_request ($body) {
 		hash_equals($_SERVER['HTTP_X_HUB_SIGNATURE'], 'sha1=' . hash_hmac('sha1', $body, $config->token));
 }
 
-/**
- * Checks if two hashes are equal in an unoptimized way so as to prevent time-checking attacks.
- * @param string $a The hash
- * @param string $b Another hash to compare to
- * @return bool True if they are equal
- */
-function hash_equals ($a, $b) {
-	$a_length = strlen($a);
-	if ($a_length !== strlen($b)) { return false; }
+if (!function_exists('hash_equals')) {
+	/**
+	 * Checks if two hashes are equal in an unoptimized way so as to prevent time-checking attacks.
+	 * @param string $a The hash
+	 * @param string $b Another hash to compare to
+	 * @return bool True if they are equal
+	 */
+	function hash_equals ($a, $b) {
+		$a_length = strlen($a);
+		if ($a_length !== strlen($b)) { return false; }
 
-	$result = 0;
-	for ($i = 0; $i < $a_length; $i++) {
-		$result |= ord($a[$i]) ^ ord($b[$i]);
+		$result = 0;
+		for ($i = 0; $i < $a_length; $i++) {
+			$result |= ord($a[$i]) ^ ord($b[$i]);
+		}
+
+		return $result === 0;
 	}
-
-	return $result === 0;
 }
 
 /**
