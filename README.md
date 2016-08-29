@@ -32,9 +32,25 @@ The first step is to "fork" the *[CodeColaLLC/WordPress](https://github.com/Code
 1. Finally, merge in the upstream repository's code with
   ```
   git pull upstream master
+  git push origin master
   ```
 
 Now the repository is linked to the original WordPress repository and can be used normally. If changes are made to the WordPress repository that you want to sync with the client's instance, simply use `git pull upstream master` to merge in the changes again.
+
+## Generating SSH key
+
+For private repositories, you will need to generate an SSH key that the remote server can use to authenticate with GitHub without using traditional passwords.
+
+1. Run this command *from your home directory* (or at least outside of any Git repo so you don't accidentally commit) on your local computer to use the typical algorithm for generating a pair of public and private keys. You can enter any filename (for example, `key-acmeco`) and two files will be generated in your current working directory. *Leave the passphrase blank.*
+  ```
+  ssh-keygen -t rsa
+  ```
+
+1. Two files were generated in your working directory (following from the previous example, `key-acmeco` and `key-acmeco.pub`). Copy the contents of `key-acmeco.pub` to your clipboard.
+
+1. Go to the *Settings* page of your new repository on GitHub, then select *Deploy Keys*.
+
+1. Add a deploy key (the name is unimportant; something like `deploy` will do). In the *Key* field, paste the contents. Click *Add key*.
 
 ## Installing WordPress locally
 
@@ -65,13 +81,26 @@ In order to install WordPress on the client's web server, you will need SSH acce
 
 1. Once authenticated, make sure you are in the user's home directory.
 
-1. Run an `ls` command, looking for the public root (such as *public_html*, *htdocs*, or *www*). Future examples will consider this directory to be called *public_html*. 
-
-1. ❗ If **any** files exist in this public root directory, the next command will fail. Delete or move any existing files before running the next command.
-
-1. Assuming Git is installed on the host, clone the client's WordPress website into the public root directory with
+1. Create a directory called `.ssh` and a file within it named `id_rsa`.
   ```
-  git clone https://github.com/CodeColaLLC/acmeco-wordpress.git public_html
+  mkdir .ssh
+  vim .ssh/id_rsa
+  ```
+
+1. In another terminal tab, copy the contents of the other generated key file from the *Generate SSH key* section (e.g. `~/key-acmeco` on your local computer) to your clipboard. Paste them into the newly created `id_rsa` file on the server.
+
+1. Change the permissions of the `id_rsa` file.
+  ```
+  chmod 0400 .ssh/id_rsa
+  ```
+
+1. Determine the root of this installation (usually `public_html` unless running from a subdirectory or subdomain). This will be referred to as `public_html` in future documentation in this readme, but substitute when needed.
+
+1. ❗ If **any** files exist in `public_html`, the next command will fail. Delete or move any existing files before running the next command.
+
+1. Assuming Git is installed on the host, clone the client's WordPress website into the `public_html` directory using SSH.
+  ```
+  git clone git@github.com:CodeColaLLC/acmeco-wordpress.git public_html
   ```
 
 1. Download WordPress with
@@ -86,7 +115,7 @@ In order to install WordPress on the client's web server, you will need SSH acce
 
 1. Move the extracted *wordpress* directory into the public root, e.g.
   ```
-  mv wordpress/* public_html
+  rsync -a wordpress/* public_html
   ```
 
 1. You should now be able to access the WordPress install wizard on the web server. Navigate to the website's domain (e.g. http://*acmeco.com*) to get to the installation wizard.
